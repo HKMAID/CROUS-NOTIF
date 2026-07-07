@@ -1,0 +1,43 @@
+name: CROUS Watcher
+
+concurrency:
+  group: crous-watcher
+  cancel-in-progress: false
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"   # toutes les 5 minutes (minimum imposé par GitHub)
+  workflow_dispatch: {}      # lancer manuellement depuis l'onglet Actions
+
+permissions:
+  contents: write            # nécessaire pour recommiter crous_state.json
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du repo
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Vérifier les logements CROUS
+        run: python3 main.py --once
+        env:
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+
+      - name: Sauvegarder l'état (logements déjà vus)
+        run: |
+          git config user.name "crous-watcher-bot"
+          git config user.email "actions@github.com"
+          git add crous_state.json
+          git diff --cached --quiet || git commit -m "update state [skip ci]"
+          git push
