@@ -1,2 +1,2 @@
-# CROUS-NOTIF
-Background worker (Web scraping)
+# CROUS76
+Automated Web Scraping Workflow with Email Notifications
