@@ -6,11 +6,20 @@ concurrency:
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # toutes les 5 minutes (minimum imposé par GitHub)
-  workflow_dispatch: {}      # lancer manuellement depuis l'onglet Actions
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Mode d'exécution"
+        required: false
+        default: "once"
+        type: choice
+        options:
+          - once
+          - test
 
 permissions:
-  contents: write            # nécessaire pour recommiter crous_state.json
+  contents: write            # pour recommiter crous_state.json
 
 jobs:
   check:
@@ -28,7 +37,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Vérifier les logements CROUS
-        run: python3 main.py --once
+        run: python3 main.py --${{ github.event.inputs.mode || 'once' }}
         env:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
