@@ -136,7 +136,7 @@ def main():
 
     if args.test:
         ok = send_email(
-            "✅ Test — CROUS Watcher",
+            "Test — CROUS76",
             "<p>Ceci est un email de test. Si tu le reçois (même dans les spams, "
             "marque-le comme 'non spam'), la config SMTP fonctionne.</p>",
         )
@@ -152,10 +152,10 @@ def main():
     if first_run:
         state = {"seen_ids": []}
         # Email de test au tout premier lancement, pour vérifier la config
-        # et "habituer" ta boîte mail à recevoir ces messages (anti-spam).
+        # et habituer la boîte mail à recevoir ces messages (anti-spam).
         send_email(
-            "✅ CROUS Watcher démarré",
-            "<p>La surveillance vient de démarrer. Tu recevras un email dès qu'un "
+            "CROUS76 lancé",
+            "<p>La surveillance vient de lacer. Tu recevras un email dès qu'un "
             "nouveau logement apparaîtra dans tes résultats.</p>",
         )
 
