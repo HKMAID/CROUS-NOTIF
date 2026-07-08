@@ -1,4 +1,4 @@
-name: CROUS Watcher
+name: CROUS76
 
 concurrency:
   group: crous-watcher
