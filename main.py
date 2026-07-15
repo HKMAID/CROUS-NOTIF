@@ -38,6 +38,7 @@ USER_AGENT = (
     "(KHTML, like Gecko) Chrome/125.0 Safari/537.36"
 )
 OVERLOAD_MARKER = "vous etes trop nombreux"
+NO_NEW_EMAIL_EVERY = int(os.environ.get("NO_NEW_EMAIL_EVERY", 14))
 
 logging.basicConfig(
     level=logging.INFO,
@@ -118,8 +119,20 @@ def check_once(state: dict) -> dict:
         )
         send_email(f"🏠 {len(new_ids)} nouveau(x) logement(s) CROUS disponible(s)", body)
         log.info("%d nouveau(x) logement(s) — email envoyé.", len(new_ids))
+        state["no_new_count"] = 0 
     else:
-        log.info("Aucun nouveau logement (%d actuellement listé(s)).", len(current_ids))
+        no_new_count = state.get("no_new_count", 0) + 1
+        log.info(
+            "Aucun nouveau logement (%d actuellement listé(s)). [%d/%d avant email de statut]",
+            len(current_ids), no_new_count, NO_NEW_EMAIL_EVERY,
+        )
+        if no_new_count >= NO_NEW_EMAIL_EVERY:
+            send_email(
+                "CROUS76 — rapport quotidien",
+                "<p>Toujours aucun nouveau logement trouvé.</p>",
+            )
+            no_new_count = 0
+        state["no_new_count"] = no_new_count
 
     state["seen_ids"] = list(current_ids)
     return state
