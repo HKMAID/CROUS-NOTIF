@@ -94,7 +94,7 @@ def load_state() -> dict:
     if os.path.exists(STATE_FILE):
         with open(STATE_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
-    return None  # None = tout premier lancement
+    return None  # None = premier lancement
 
 
 def save_state(state: dict) -> None:
@@ -123,7 +123,7 @@ def check_once(state: dict) -> dict:
     else:
         no_new_count = state.get("no_new_count", 0) + 1
         log.info(
-            "Aucun nouveau logement (%d actuellement listé(s)). [%d/%d avant email de statut]",
+            "Aucun nouveau logement (%d actuellement listé(s)). [%d/%d itérations]",
             len(current_ids), no_new_count, NO_NEW_EMAIL_EVERY,
         )
         if no_new_count >= NO_NEW_EMAIL_EVERY:
